@@ -120,9 +120,18 @@
   .chain-box h3{font-size:18px;margin-bottom:8px}
   .chain-box p{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6}
   .chain-box .btn{margin-top:8px}
+
+  /* === 暂停维护 === */
+  .paused-overlay{position:fixed;inset:0;z-index:9999;background:rgba(8,8,15,0.95);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+  .paused-overlay .icon{font-size:64px}
+  .paused-overlay h2{font-size:28px;color:var(--accent)}
+  .paused-overlay p{color:var(--muted);font-size:14px;text-align:center;max-width:320px}
+
 </style>
 </head>
 <body>
+<div class="paused-overlay" id="pausedOverlay"><div class="icon">🔧</div><h2>维护中</h2><p>金刚协议正在进行升级维护，暂停质押服务。<br>请稍后再来，感谢支持 🙏</p></div>
+
 <div class="container">
   <div class="header">
     <div class="logo">金刚协议<span>CTO仪表盘</span></div>
@@ -316,6 +325,8 @@
 </footer>
 
 <script>
+const PAUSED=true;
+
 const SA = '0x5ae9be2c9f8f759c60d059992b4b3adaed5de6c6';
 const RA = '0x93921692846FF55d30F107a820F5867C0DF600Ab';
 const RPCS = [
@@ -631,7 +642,7 @@ async function ensureApp(amt){
   await tx.wait();mg('msgFlexStake','授权成功','ok');return true;
 }
 
-async function flexStake(){
+async function flexStake(){if(PAUSED)return alert("当前维护中，暂停质押");
   if(!A)return alert('请先连接钱包');
   const v=document.getElementById('flexAmt').value;
   if(!v||parseFloat(v)<=0)return mg('msgFlexStake','请输入数量','err');
@@ -647,7 +658,7 @@ async function flexStake(){
   finally{setLoading('btnFlexStake',false)}
 }
 
-async function flexRedeem(){
+async function flexRedeem(){if(PAUSED)return alert("当前维护中，暂停操作");
   if(!A)return alert('请先连接钱包');
   setLoading('btnFlexRedeem',true);
   try{
@@ -658,7 +669,7 @@ async function flexRedeem(){
   finally{setLoading('btnFlexRedeem',false)}
 }
 
-async function fixedStake(){
+async function fixedStake(){if(PAUSED)return alert("当前维护中，暂停质押");
   if(!A)return alert('请先连接钱包');
   const v=document.getElementById('fixedAmt').value;
   if(!v||parseFloat(v)<=0)return mg('msgFixedStake','请输入数量','err');
@@ -674,7 +685,7 @@ async function fixedStake(){
   finally{setLoading('btnFixedStake',false)}
 }
 
-async function claim(){
+async function claim(){if(PAUSED)return alert("当前维护中，暂停操作");
   if(!A)return alert('请先连接钱包');
   setLoading('btnClaim',true);
   try{
@@ -726,7 +737,7 @@ async function loadFS(){
   }catch(x){fs.innerHTML='<div class="no-data">加载失败</div>'}
 }
 
-async function fixedRedeem(){
+async function fixedRedeem(){if(PAUSED)return alert("当前维护中，暂停操作");
   if(!A)return alert('请先连接钱包');
   const idx=document.getElementById('redeemIdx').value;
   if(!idx)return mg('msgFixedRedeem','请输入 idx','err');
@@ -739,7 +750,7 @@ async function fixedRedeem(){
   finally{setLoading('btnFixedRedeem',false)}
 }
 
-async function fixedRedeemByIdx(idx){
+async function fixedRedeemByIdx(idx){if(PAUSED)return alert("当前维护中，暂停操作");
   if(!A)return alert('请先连接钱包');
   try{
     const c=S.connect(W);const tx=await c.fixedRedeem(idx);
